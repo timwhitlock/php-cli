@@ -192,14 +192,14 @@ final class cli {
            list( $short, $long, $desc ) = $r;
            if( ( $short && is_null(self::arg($short)) ) || ( $long && is_null(self::arg($long)) ) ){
                $name = $long or $name = $short;
-               self::stderr("Argument required '%s' (%s)\n", $name, $desc );
+               self::err("Argument required '%s' (%s)", $name, $desc );
                self::exit_help();
            }
        }
        // exit if invalid argument found. This helps avoid mistakes
        foreach( self::$args as $flag => $value ){
            if( ! isset(self::$_args_idx[$flag]) ){
-               self::stderr("Unexpected argument '%s' \n", $flag);
+               self::err("Unexpected argument '%s'", $flag);
                self::exit_help();
            }
        }    
