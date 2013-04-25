@@ -332,11 +332,12 @@ final class cli {
     /**
      * 
      */
-    public static function death( $msg = '' ){
-       if( $msg ){
+    public static function death( $message = '' ){
+       if( $message ){
            $args = func_get_args();
-           $args[0] .= "\n";
-           call_user_func_array(array(__CLASS__,'stderr'),$args);
+           $args[0] = '['.date('D M d H:i:s Y').'] '.basename(self::arg(0)).': Fatal: '.trim( $args[0], "\n" )."\n";
+           self::style( self::FG_WHITE, self::BG_RED );
+           call_user_func_array(array(__CLASS__,'stderr'), $args );
        }
        exit(1);
     }
