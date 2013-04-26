@@ -74,7 +74,13 @@ final class cli {
     const BG_MAGENTA = '45';
     const BG_CYAN    = '46';
     const BG_GREY    = '47';
-    
+
+    /**
+     * Font styles
+     */
+    const TEXT_BOLD = '1';    
+    const TEXT_UNDERLINE = '4';    
+
     /**
      * private constructor ensures only one instance of self
      */    
