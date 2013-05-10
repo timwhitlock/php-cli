@@ -364,21 +364,13 @@ final class cli {
     /**
      * Print single error line
      */        
-    public static function err( $message, $level = E_USER_ERROR ){
+    public static function err( $message ){
         $args = func_get_args();
         $args[0] = '['.date('D M d H:i:s Y').'] '.basename(self::arg(0)).': '.trim( $args[0], "\n" )."\n";
-        static $stdout = array( __CLASS__, 'stderr' );
+        static $stderr = array( __CLASS__, 'stderr' );
         $style = self::$_style;
-        if( ( E_USER_ERROR | E_RECOVERABLE_ERROR ) & $level ){
-            self::style( self::FG_WHITE, self::BG_RED );
-        }
-        else if( ( E_USER_WARNING | E_WARNING ) & $level ){
-            self::style( self::FG_LIGHT_GREY, self::BG_RED  );
-        }
-        else {
-            self::style( self::FG_RED );
-        }
-        call_user_func_array( $stdout, $args );
+        self::style( self::FG_WHITE, self::BG_RED );
+        call_user_func_array( $stderr, $args );
         self::$_style = $style;
     }    
     
@@ -415,16 +407,30 @@ final class cli {
             E_RECOVERABLE_ERROR  => 'Recoverable Error',
         );
         $message = sprintf (
-            '%s: %s in %s#%u',
+            "[%s] %s: %s - %s in %s#%u\n",
+            date('D M d H:i:s Y'),
+            basename(self::arg(0)),
             $types[$type], 
             $message, 
             basename($file), 
             $line
         );
-        self::err( $message, $type );
-        if( $type & ( E_USER_ERROR | E_RECOVERABLE_ERROR ) ){
+        $fatal = ( E_USER_ERROR | E_RECOVERABLE_ERROR ) & $type;
+        $style = self::$_style;
+        if( $fatal ){
+            self::style( self::FG_WHITE, self::BG_RED );
+        }
+        else if( ( E_USER_WARNING | E_WARNING ) & $type ){
+            self::style( self::FG_LIGHT_GREY, self::BG_RED  );
+        }
+        else {
+            self::style( self::FG_RED );
+        }
+        self::stderr( $message );
+        if( $fatal ){
             exit(1);
         }
+        self::$_style = $style;
     }
     
     
