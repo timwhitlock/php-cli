@@ -364,12 +364,20 @@ final class cli {
     /**
      * Print single error line
      */        
-    public static function err( $message ){
+    public static function err( $message, $level = E_USER_ERROR ){
         $args = func_get_args();
-        $args[0] = '['.date('D M d H:i:s Y').'] '.basename(self::arg(0)).': Error: '.trim( $args[0], "\n" )."\n";
+        $args[0] = '['.date('D M d H:i:s Y').'] '.basename(self::arg(0)).': '.trim( $args[0], "\n" )."\n";
         static $stdout = array( __CLASS__, 'stderr' );
         $style = self::$_style;
-        self::style( self::FG_WHITE, self::BG_RED );
+        if( ( E_USER_ERROR | E_RECOVERABLE_ERROR ) & $level ){
+            self::style( self::FG_WHITE, self::BG_RED );
+        }
+        else if( ( E_USER_WARNING | E_WARNING ) & $level ){
+            self::style( self::FG_LIGHT_GREY, self::BG_RED  );
+        }
+        else {
+            self::style( self::FG_RED );
+        }
         call_user_func_array( $stdout, $args );
         self::$_style = $style;
     }    
@@ -407,15 +415,13 @@ final class cli {
             E_RECOVERABLE_ERROR  => 'Recoverable Error',
         );
         $message = sprintf (
-            '[%s] %s: %s: %s in %s#%u',
-            date('D M d H:i:s Y'),
-            basename( self::arg(0) ), 
+            '%s: %s in %s#%u',
             $types[$type], 
             $message, 
             basename($file), 
             $line
         );
-        self::err( $message );
+        self::err( $message, $type );
         if( $type & ( E_USER_ERROR | E_RECOVERABLE_ERROR ) ){
             exit(1);
         }
