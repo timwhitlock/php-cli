@@ -407,7 +407,7 @@ final class cli {
             E_RECOVERABLE_ERROR  => 'Recoverable Error',
         );
         $message = sprintf (
-            "[%s] %s: %s: %s in %s#%u\n",
+            '[%s] %s: %s: %s in %s#%u',
             date('D M d H:i:s Y'),
             basename( self::arg(0) ), 
             $types[$type], 
@@ -415,7 +415,7 @@ final class cli {
             basename($file), 
             $line
         );
-        self::stderr( $message );
+        self::err( $message );
         if( $type & ( E_USER_ERROR | E_RECOVERABLE_ERROR ) ){
             exit(1);
         }
